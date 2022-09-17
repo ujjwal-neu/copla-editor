@@ -19,6 +19,8 @@ export default class Graph extends Component {
     artifacts: PropTypes.array,
     dateWindow: PropTypes.array.isRequired,
     onChange: PropTypes.func.isRequired,
+    minRange: PropTypes.number,
+    maxRange: PropTypes.number,
   }
 
   static defaultProps = {
@@ -46,6 +48,10 @@ export default class Graph extends Component {
       this.renderGraph();
       this.redrawGraph();
     }
+
+    if((this.props.minRange!== prevProps.minRange) || (this.props.maxRange!== prevProps.maxRange)) {
+      this.createGraph();
+    }
   }
 
   componentWillUnmount() {
@@ -58,14 +64,15 @@ export default class Graph extends Component {
   }
 
   getOptions = () => {
-    const { channel, dateWindow, height } = this.props;
+    const { channel, dateWindow, height, minRange, maxRange } = this.props;
     return {
       dateWindow,
       // TODO toggle dynamic range / physical range ???
       height: Math.max(height, this.minHeight),
       valueRange: [
-        channel.physicalMinimum - 1, // -1 and +1 so the graph doesn't touch the border and y-labels are correctly drawn
-        channel.physicalMaximum + 1,
+        // channel.physicalMinimum - 1, // -1 and +1 so the graph doesn't touch the border and y-labels are correctly drawn
+        // channel.physicalMaximum + 1,
+        minRange, maxRange
       ],
       axes: {
         x: {

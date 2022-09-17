@@ -12,28 +12,32 @@ export default class Controls extends Component {
   }
 
   render() {
-    const Button = ({ children, action, seconds }) => (
+    const Button = ({ children, action, seconds, value }) => (
       <button
         className="btn btn-default btn-ghost"
         onClick={this.handleClicks}
         data-action={action}
         data-seconds={seconds}
+        data-value={value}
       >{children}</button>
     );
 
     return (
       <div className="controls site-nav btn-group m-l-1">
+        <h5>Time: </h5>
         <Button action="moveLeft">←</Button>
         <Button action="moveRight">→</Button>
         <Button action="play">▶</Button>
-        {/* <Button action="time" seconds="10">10s</Button> */}
-        <Button action="time" seconds="30">30s</Button>
-        {/* <Button action="time" seconds="60">1m</Button> */}
-        {/* <Button action="time" seconds="120">2m</Button> */}
-        <Button action="time" seconds="300">5m</Button>
-        <Button action="time" seconds="600">10m</Button>
+        <Button action="time" seconds="3">3s</Button>
+        <Button action="time" seconds="5">5s</Button>
+        <Button action="time" seconds="7">7s</Button>
+        <Button action="time" seconds="10">10s</Button>
         <Button action="time" seconds="full">full</Button>
         <Button action="saveAnnotation">Save Annotation</Button>
+        <h5>Scale: </h5>
+        <Button action="setRange" value="100">100</Button>
+        <Button action="setRange" value="150">150</Button>
+        <Button action="setRange" value="auto">auto</Button>
       </div>
     );
   }

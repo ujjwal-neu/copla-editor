@@ -20,6 +20,7 @@ export default class EdfView extends Component {
     artifacts: {},
     onNewAnnotation: {},
     controls: { onClick() {} },
+    // scale: { onClick() {} },
   }
 
   state = {
@@ -27,6 +28,8 @@ export default class EdfView extends Component {
     frequency: 1,
     data: [],
     bufferRange: [0, 0],
+    minRange: -75,
+    maxRange: 75
   }
 
   initialWindowWidth = 30 * 1000
@@ -41,6 +44,7 @@ export default class EdfView extends Component {
     this.handleResize = _.debounce(this.setFrequency, 50);
     this.setStateAsync = state => new Promise(resolve => this.setState(state, resolve));
     props.controls.onClick = this.handleClick;
+    // props.scale.onClick = this.handleClickScale;
   }
 
   async componentDidMount() {
@@ -78,10 +82,9 @@ export default class EdfView extends Component {
     (keyMap[e.which || e.keyCode] || _.noop)();
   }
 
-  handleClick = async ({ action, seconds }) => {
+  handleClick = async ({ action, seconds, value }) => {
     switch (action) {
       case 'analyze':
-
         break;
       case 'moveLeft':
         this.moveLeft();
@@ -98,7 +101,32 @@ export default class EdfView extends Component {
       case 'saveAnnotation':
         await this.saveAnnotation();
         break;
+      case 'setRange':
+        this.handleRangeButtons(value);
+        break;
       default: break;
+    }
+  }
+
+  // handleClickScale = async ({ action, seconds }) => {
+  //   console.log("meo",action, seconds);
+  //   switch (action) {
+  //     case 'time':
+  //       this.handleRangeButtons(seconds);
+  //       break;
+  //     default: break;
+  //   }
+  // }
+
+  handleRangeButtons = (value) => { //ranges
+    if (value === '100') {
+    this.setState({minRange: -50, maxRange: 50})
+    }
+    else if (value === '150') {
+      this.setState({minRange: -75, maxRange: 75})
+      }
+    else {
+      this.setState({minRange: -100, maxRange: 100})
     }
   }
 
@@ -333,6 +361,8 @@ export default class EdfView extends Component {
             onChange={this.updateDateWindow}
             height={height}
             ref={addGraph(channel)}
+            minRange={this.state.minRange}
+            maxRange={this.state.maxRange}
           />
         )}
       </div>

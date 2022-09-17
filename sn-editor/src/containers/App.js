@@ -103,7 +103,7 @@ export default class App extends Component {
 
     const bundles = await Promise.all(this.state.bundles.map(async bundle => {
       console.log(bundle.edf.file.name);
-      if (bundle.edf.file.name == edfName) {
+      if (bundle.edf.file.name === edfName) {
         return await new Bundle({edf: bundle.edf.file.file, artifacts: file}).load;
       } else {
         return bundle;
@@ -148,7 +148,7 @@ export default class App extends Component {
         </Sidebar>
         <div className="edf-wrapper" style={{ maxWidth: `calc(100% - ${sidebarWidth})` }}>
           {edf
-            ? <EDF key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation} />
+            ? <EDF key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation}  />
             : <p className="alert alert-info">Select an EDF file to display it.</p>
           }
         </div>
@@ -175,7 +175,7 @@ export default class App extends Component {
                 onClick={this.toggleInfobox}
                 title="Zeige Dateiinfos"
               >
-                ℹ️️
+                 <span role="img" aria-label="Zeige">ℹ️️</span>
               </button>
             </nav>
           )}

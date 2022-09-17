@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
-import { formatSize } from '../utils/utils';
+// import _ from 'lodash';
+// import { formatSize } from '../utils/utils';
 
 const edfHeader = [
   'numberOfSignals',

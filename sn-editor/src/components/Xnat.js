@@ -226,7 +226,7 @@ export default class XnatView extends Component {
 
         <div className="card">
           <div className="card-body">
-            <div class="select-box">
+            <div className="select-box">
               <label>Project</label>
               <select name="project" onChange={this.handleSelectProject}>
                 {_.map(projects, p =>
@@ -234,7 +234,7 @@ export default class XnatView extends Component {
                 )};
               </select>
             </div>
-            <div class="select-box">
+            <div className="select-box">
               <label>Subject</label>
               <select name="subject" onChange={this.handleSelectSubject}>
                 {_.map(subjects, s =>
@@ -242,7 +242,7 @@ export default class XnatView extends Component {
                 )};
               </select>
             </div>
-            <div class="select-box">
+            <div className="select-box">
               <label>Sleep Research Session</label>
               <select name="experiment" onChange={this.handleSelectExperiment}>
                 <option key="new" value={null}>Create New Session</option>
@@ -251,7 +251,7 @@ export default class XnatView extends Component {
                 )};
               </select>
             </div>
-            <div class="select-box">
+            <div className="select-box">
               <label>New Session Name</label>
               <input id="experiment-name" name="experimentName" onChange={this.handleInputExperimentName}></input>
             </div>
