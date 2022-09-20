@@ -125,6 +125,17 @@ export default class Graph extends Component {
     const options = this.getOptions();
     const value = [dateWindow[0], [channel.physicalMinimum, 0, channel.physicalMaximum]];
     const graph = new Dygraph(this.container, [value], options);
+    console.log(graph)
+    graph.setAnnotations([
+      {
+        series: channel.standardLabel,
+        x: "12:52:55",
+        shortText: "L",
+        text: "Good/Bad"
+      }
+      ]);
+      console.log("Highlighted", graph.getHighlightSeries());
+      console.log("Label", graph.getLabels());
     graph.name = channel.label;
     graph.draw = graph.drawGraph_.bind(graph);
     graph.cascadeEvents_('clearChart');
@@ -133,7 +144,6 @@ export default class Graph extends Component {
     this.graph = graph;
     this.attachObserver(graph, this.container);
     this.addPlotbands(graph, this.props.artifacts);
-
     const span = document.createElement('span');
     span.className = 'graph-label';
     span.innerText = channel.label;
@@ -143,12 +153,13 @@ export default class Graph extends Component {
   addPlotbands(graph, artifacts) {
     if (!artifacts) return;
     artifacts.forEach(({ type, starttime, endtime }) => {
+      console.log(type, starttime, endtime);
       if (type in typeMap) type = typeMap[type];
       graph.addBand({
         start: starttime,
         end: endtime,
         note: type,
-        isEditable: false,
+        isEditable: true,
       });
     });
   }
@@ -197,6 +208,8 @@ export default class Graph extends Component {
   render() {
     const ref = el => this.container = el;
     const style = { width: '100%' };
+
+    // console.log(this.graph);
     return <div ref={ref} style={style} />;
   }
 

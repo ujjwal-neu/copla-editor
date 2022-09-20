@@ -32,7 +32,7 @@ export default class EdfView extends Component {
     maxRange: 75
   }
 
-  initialWindowWidth = 30 * 1000
+  initialWindowWidth = 5 * 1000
   chunkWidth = 300 * 1000 // 5min / unabhängig von Frequenz, weil feste Datenmenge geladen wird, auch wenn danach Reduktion
   isLoading = false
 
@@ -131,27 +131,49 @@ export default class EdfView extends Component {
   }
 
   saveAnnotation = async () => {
-    let header = ['Channel', 'Type', 'Start', 'End'];
+    // let header = ['Channel', 'Type', 'Start', 'End'];
 
-    let events = _.flatMap(this.graphs, graph =>
+    // let events = _.flatMap(this.graphs, graph =>
+    //   graph.graph.bands.map(band => [
+    //     graph.props.channel.label,
+    //     band.type,
+    //     band.start,
+    //     band.end,
+    //   ]),
+    // );
+    // console.log("events", events)
+
+    // let csv = [header, ...events]
+    //   .map(e => e.join(",")).join("\n");
+    //   console.log(csv); // CAN BE DOWNLOADED FROM HERE
+    // let fileName = this.props.edf.file.name.replace(/\.edf$/, '-annotation.csv');
+
+    // let enc = new TextEncoder();
+
+    // let file = new File([enc.encode(csv)], fileName);
+    // // let file = new File([enc.encode(csv)], "");
+    // console.log(file)
+
+    // return this.props.onNewAnnotation(file);
+
+    
+    const XLSX = await import('xlsx');
+    const header = ['Label', 'Start', 'End'];
+    const events = _.flatMap(this.graphs, graph =>
       graph.graph.bands.map(band => [
         graph.props.channel.label,
-        band.type,
+        // band.type,
         band.start,
         band.end,
       ]),
     );
+    
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet([header, ...events]);
+    const sheetName = 'events';
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    XLSX.writeFile(wb, 'events.xlsx', { compression: true });
 
-    let csv = [header, ...events]
-      .map(e => e.join(",")).join("\n");
-
-    let fileName = this.props.edf.file.name.replace(/\.edf$/, '-annotation.csv');
-
-    let enc = new TextEncoder();
-
-    let file = new File([enc.encode(csv)], fileName);
-
-    return this.props.onNewAnnotation(file);
   };
 
   handleTimeButtons = (seconds) => {
@@ -310,6 +332,7 @@ export default class EdfView extends Component {
     const { dateWindow, frequency, data = [] } = this.state;
     const header = this.props.edf.header;
     const artifacts = _.get(this.props.artifacts, 'data', {});
+    // console.log(this.props.artifacts);
     const setGraphWrapper = el => this.graphWrapper = el;
     const channels = header.channels.filter(c => c.label !== '-');
     const height = this.graphWrapper

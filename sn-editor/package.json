@@ -4,8 +4,6 @@
   "homepage": ".",
   "private": true,
   "dependencies": {
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
     "lodash": "^4.17.11",
     "prop-types": "^15.6.0",
     "query-string": "^5.1.0",
@@ -13,7 +11,9 @@
     "react-dom": "^16.7.0",
     "react-dropzone": "^4.2.7",
     "tawian-frontend": "^2.1.4",
-    "typeface-cousine": "0.0.54"
+    "typeface-cousine": "0.0.54",
+    "xlsx": "^0.18.5",
+    "xlsx-import": "^2.4.4"
   },
   "devDependencies": {
     "react-scripts": "^2.1.2"

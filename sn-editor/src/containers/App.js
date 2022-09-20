@@ -5,7 +5,7 @@ import EDF from 'components/EDF-View';
 import EdfInfoBox from 'components/EdfInfoBox';
 import Controls from 'components/Controls';
 import Sidebar from 'components/Sidebar';
-import XNAT from 'components/Xnat';
+// import XNAT from 'components/Xnat';
 import FileBrowser from 'components/FileBrowser';
 import Bundle from 'utils/ResourceBundle';
 
@@ -23,8 +23,10 @@ export default class App extends Component {
 
   async componentDidMount() {
     const params = queryString.parse(window.location.search);
+    console.log(params);
     const edf = params.edf;
     const artifacts = params.artifacts;
+    console.log(artifacts);
     if (edf) {
       const bundle = await new Bundle({ edf, artifacts }).load;
       this.setState({ bundles: [bundle], activeBundle: bundle });
@@ -133,12 +135,12 @@ export default class App extends Component {
           showSidebar={this.state.showSidebar}
           width={sidebarWidth}
         >
-          <XNAT
+          {/* <XNAT
             onLoginChange={this.handleLoginChange}
             onNewData={this.handleNewData}
             onUpdateStatus={this.handleUpdateStatus}
             bundles={uploadBundles}
-          />
+          /> */}
           <FileBrowser
             bundles={this.state.bundles}
             canUpload={this.state.loggedIn}
