@@ -125,6 +125,7 @@ class Dygraph {
     this.fractions_ = attrs.fractions || false;
     this.dateWindow_ = attrs.dateWindow || null;
 
+    // this.annotations_ = [ ['Fp2', 1661757775956.5217, 1661757777958.3333],['F3', 1661757775530.797, 1661757777369.5652]];
     this.annotations_ = [];
 
     // Clear the div. This ensure that, if multiple dygraphs are passed the same

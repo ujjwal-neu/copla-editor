@@ -92,6 +92,7 @@ export default class Hypnogram extends Component {
   }
 
   appendAxis = () => {
+    console.log('append axis')
     const xAxis = document.createElement('div');
     xAxis.className = 'dygraph-axis-label';
     xAxis.innerHTML = 'W<br>N1<br>N2<br>N3<br>R';
@@ -99,6 +100,7 @@ export default class Hypnogram extends Component {
   }
 
   setStageForEpoch = (newStage) => {
+    console.log('setstagefor epoch')
     const { stages } = this.state;
     const { start, dateWindow } = this.props;
     const epoch = Math.floor((dateWindow[1] - start) / 1000 / 30);

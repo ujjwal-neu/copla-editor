@@ -125,7 +125,7 @@ export default class Graph extends Component {
     const options = this.getOptions();
     const value = [dateWindow[0], [channel.physicalMinimum, 0, channel.physicalMaximum]];
     const graph = new Dygraph(this.container, [value], options);
-    console.log(graph)
+   
     graph.setAnnotations([
       {
         series: channel.standardLabel,
@@ -134,8 +134,6 @@ export default class Graph extends Component {
         text: "Good/Bad"
       }
       ]);
-      console.log("Highlighted", graph.getHighlightSeries());
-      console.log("Label", graph.getLabels());
     graph.name = channel.label;
     graph.draw = graph.drawGraph_.bind(graph);
     graph.cascadeEvents_('clearChart');

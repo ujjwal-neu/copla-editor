@@ -47,8 +47,9 @@ export default class App extends Component {
         const artifacts = files.find(file => file.name === artifactsName);
         return new Bundle({ edf, artifacts }).load;
       }));
-
+      console.log(newBundles)
     const bundles = [...this.state.bundles, ...newBundles];
+
 
     if (bundles.length === 1 && !this.state.activeBundle) {
       this.setState({ bundles, activeBundle: bundles[0] });
@@ -56,6 +57,48 @@ export default class App extends Component {
     else {
       this.setState({ bundles });
     }
+  }
+
+  rendermyfile= async (files=[])=>{
+    
+    // const newBundles = await Promise.all(files
+    //   .filter(file => file.name.endsWith('.edf'))
+    //   .map((edf) => {
+    //     const artifactsName = edf.name.replace(/\.edf$/, '-annotation.csv');
+    //     const artifacts = files.find(file => file.name === artifactsName);
+    //     return new Bundle({ edf, artifacts }).load;
+    //   }));
+
+    const edf = new File([await (await fetch('/file.edf')).blob()], '/file.edf')
+    console.log(edf)
+    const artifactsName = edf.name.replace(/\.edf$/, '-annotation.csv');
+    // const artifacts = files.find(file => file.name === artifactsName);
+    const newBundles = await new Bundle({ edf, artifactsName }).load;
+    console.log(newBundles)
+    const bundles = [...this.state.bundles, newBundles];
+    console.log('the bundles is ',bundles)
+
+    if (bundles.length === 1 && !this.state.activeBundle) {
+      this.setState({ bundles, activeBundle: bundles[0] });
+    }
+    else {
+      this.setState({ bundles });
+    }
+
+
+   
+
+  }
+
+  renderfileoption (wrapperClass='',){
+    
+    return(
+      <div className={wrapperClass}>
+        {/* <input type='file' onChange={(e)=>{this.rendermyfile(e.target.files)}} /> */}
+        <button onClick={this.rendermyfile}>click to load file</button>
+        
+      </div>
+    )
   }
 
   renderDropzone(wrapperClass = '') {
@@ -191,7 +234,7 @@ export default class App extends Component {
 
           {hasBundle
             ? this.renderEditor()
-            : this.renderDropzone()
+            : this.renderfileoption()
           }
         </main>
 
