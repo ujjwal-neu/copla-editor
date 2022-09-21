@@ -226,7 +226,7 @@ export default class EDF {
   async getData(options = {}) {
     if (!this.didReadHeader) await this.readHeader();
 
-    console.log('getData', options);
+
 
     const { header } = this;
     const from = Math.max(options.from || 0, 0);

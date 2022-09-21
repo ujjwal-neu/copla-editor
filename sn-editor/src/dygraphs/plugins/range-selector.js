@@ -31,6 +31,7 @@ class rangeSelector {
    }
 
    activate(dygraph) {
+      console.log('range active')
       this.dygraph_ = dygraph;
       if (this.getOption_('showRangeSelector')) {
          this.createInterface_();
@@ -43,6 +44,7 @@ class rangeSelector {
    }
 
    destroy() {
+      console.log('range destroyed')
       this.bgcanvas_ = null;
       this.fgcanvas_ = null;
       this.leftZoomHandle_ = null;

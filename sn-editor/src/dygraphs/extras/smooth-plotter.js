@@ -88,6 +88,7 @@
   // See tests/plotters.html for a demo.
   // Can be controlled via smoothPlotter.smoothing
   function smoothPlotter(e) {
+    console.log('smooth plotter ')
     const ctx = e.drawingContext;
     const points = e.points;
 
