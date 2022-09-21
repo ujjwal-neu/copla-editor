@@ -110,6 +110,27 @@ export default class Graph extends Component {
 
       // zoomCallback() { /* disable (set `valueRange` to initial value) or show reset button */ },
       // disable via: Dygraph.prototype.doZoomY_ = (lowY, highY) => null;
+
+      underlayCallback: function(canvas, area, g) {
+
+        function highlight_period(x_color, x_start, x_end) {
+          var bottom_left = g.toDomCoords(x_start);
+          var top_right = g.toDomCoords(x_end);
+  
+          var left = bottom_left[0];
+          var right = top_right[0];
+  
+          canvas.fillStyle = x_color;
+          canvas.fillRect(left, area.y, right - left, area.h);
+        }
+        
+
+        highlight_period("blue", 1661757775556.7, 1661757775557.7);
+        highlight_period("red", 1661757775845.36, 1661757775846.36);
+        highlight_period("black", 1661757776520.62, 1661757776521.62);
+      }
+
+  
     };
   }
 
@@ -126,16 +147,17 @@ export default class Graph extends Component {
     const value = [dateWindow[0], [channel.physicalMinimum, 0, channel.physicalMaximum]];
     const graph = new Dygraph(this.container, [value], options);
     console.log(graph)
-    graph.setAnnotations([
-      {
-        series: channel.standardLabel,
-        x: "12:52:55",
-        shortText: "L",
-        text: "Good/Bad"
-      }
-      ]);
-      console.log("Highlighted", graph.getHighlightSeries());
-      console.log("Label", graph.getLabels());
+    // graph.setAnnotations([
+    //   {
+    //     series: channel.standardLabel,
+    //     x: "1661757775520.62",
+    //     shortText: "L",
+    //     text: "Good/Bad",
+    //     tickHeight: 10
+    //   }
+    //   ]);
+    //   console.log("Highlighted", graph.getHighlightSeries());
+    //   console.log("Label", graph.getLabels());
     graph.name = channel.label;
     graph.draw = graph.drawGraph_.bind(graph);
     graph.cascadeEvents_('clearChart');
