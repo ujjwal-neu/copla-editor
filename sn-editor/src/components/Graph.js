@@ -21,6 +21,8 @@ export default class Graph extends Component {
     onChange: PropTypes.func.isRequired,
     minRange: PropTypes.number,
     maxRange: PropTypes.number,
+    markerData:PropTypes.array,
+    annotationData:PropTypes.array
   }
 
   static defaultProps = {
@@ -30,14 +32,18 @@ export default class Graph extends Component {
     artifacts: null,
   }
 
+
   minHeight = 60
 
   componentDidMount() {
     if (this.container) this.createGraph();
+    console.log('markerData from graph component',this.props.markerData)
+    console.log('annotation from graph component',this.props.annotationData)
   }
 
   componentDidUpdate(prevProps) {
     if (!this.graph) return;
+ 
 
     if (this.props.dateWindow !== prevProps.dateWindow) {
       this.graph.dateWindow_ = this.props.dateWindow;
@@ -65,6 +71,7 @@ export default class Graph extends Component {
 
   getOptions = () => {
     const { channel, dateWindow, height, minRange, maxRange } = this.props;
+    console.log('anno data: ',this.props.annotationData)
     return {
       dateWindow,
       // TODO toggle dynamic range / physical range ???

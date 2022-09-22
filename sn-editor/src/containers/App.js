@@ -8,6 +8,7 @@ import Sidebar from 'components/Sidebar';
 // import XNAT from 'components/Xnat';
 import FileBrowser from 'components/FileBrowser';
 import Bundle from 'utils/ResourceBundle';
+import Papa from 'papaparse'
 
 export default class App extends Component {
 
@@ -17,7 +18,10 @@ export default class App extends Component {
     showSidebar: true,
     loggedIn: false,
     isInfoboxVisible: false,
+    markerData:[],
+    annotationData:[]
   }
+
 
   proxy = { onClick() {} }
 
@@ -60,23 +64,16 @@ export default class App extends Component {
   }
 
   rendermyfile= async (files=[])=>{
-    
-    // const newBundles = await Promise.all(files
-    //   .filter(file => file.name.endsWith('.edf'))
-    //   .map((edf) => {
-    //     const artifactsName = edf.name.replace(/\.edf$/, '-annotation.csv');
-    //     const artifacts = files.find(file => file.name === artifactsName);
-    //     return new Bundle({ edf, artifacts }).load;
-    //   }));
-
     const edf = new File([await (await fetch('/file.edf')).blob()], '/file.edf')
-    console.log(edf)
+    const markerFile = await(await(fetch('/markers.csv'))).text()
+    const annotationFile = await(await(fetch('/annotations.csv'))).text()
+
+    // edf file specific
     const artifactsName = edf.name.replace(/\.edf$/, '-annotation.csv');
     // const artifacts = files.find(file => file.name === artifactsName);
     const newBundles = await new Bundle({ edf, artifactsName }).load;
-    console.log(newBundles)
+ 
     const bundles = [...this.state.bundles, newBundles];
-    console.log('the bundles is ',bundles)
 
     if (bundles.length === 1 && !this.state.activeBundle) {
       this.setState({ bundles, activeBundle: bundles[0] });
@@ -84,19 +81,41 @@ export default class App extends Component {
     else {
       this.setState({ bundles });
     }
+    
+    const filesParser = ()=>{
+      let md =[]
+      let ad = []
 
+    // annotations file specific
+    Papa.parse(annotationFile,{
+      header:false,
+      delimiter:"\t",
+      complete:(results)=>{
+       ad = results.data.slice(1)
+      }
+    });
 
-   
+    // marker file specific
+    Papa.parse(markerFile,{
+      header: false,
+      delimiter: "\t",
+      complete:(results)=>{
+        md = results.data.slice(1)
+      }
+    });
+
+    this.setState({markerData:md,annotationData:ad})
+  }
+  filesParser()
 
   }
 
+
+
   renderfileoption (wrapperClass='',){
-    
     return(
       <div className={wrapperClass}>
-        {/* <input type='file' onChange={(e)=>{this.rendermyfile(e.target.files)}} /> */}
         <button onClick={this.rendermyfile}>click to load file</button>
-        
       </div>
     )
   }
@@ -193,7 +212,7 @@ export default class App extends Component {
         </Sidebar>
         <div className="edf-wrapper" style={{ maxWidth: `calc(100% - ${sidebarWidth})` }}>
           {edf
-            ? <EDF key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation}  />
+            ? <EDF annotationData={this.state.annotationData}  markerData={this.state.markerData} key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation}  />
             : <p className="alert alert-info">Select an EDF file to display it.</p>
           }
         </div>

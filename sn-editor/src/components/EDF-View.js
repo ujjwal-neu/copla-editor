@@ -14,6 +14,8 @@ export default class EdfView extends Component {
     artifacts: PropTypes.object,
     controls: PropTypes.object,
     onNewAnnotation: PropTypes.func,
+    markerData:PropTypes.array,
+    annotationData:PropTypes.array
   }
 
   static defaultProps = {
@@ -31,6 +33,7 @@ export default class EdfView extends Component {
     minRange: -75,
     maxRange: 75
   }
+  
 
   initialWindowWidth = 5 * 1000
   chunkWidth = 300 * 1000 // 5min / unabhängig von Frequenz, weil feste Datenmenge geladen wird, auch wenn danach Reduktion
@@ -358,6 +361,7 @@ export default class EdfView extends Component {
     //   </div>
     // );
 
+   
     return [
       <Range
         key="range"
@@ -375,6 +379,8 @@ export default class EdfView extends Component {
       <div key="graphs" className="graphs" ref={setGraphWrapper}>
         {height && channels.map((channel) =>
           <Graph
+            annotationData={this.props.annotationData}
+            markerData={this.props.markerData}
             key={`${channel.label}-${channel.index}`}
             channel={channel}
             frequency={frequency}
