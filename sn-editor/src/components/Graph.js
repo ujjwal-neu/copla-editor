@@ -146,7 +146,7 @@ export default class Graph extends Component {
     const options = this.getOptions();
     const value = [dateWindow[0], [channel.physicalMinimum, 0, channel.physicalMaximum]];
     const graph = new Dygraph(this.container, [value], options);
-    console.log(graph)
+    // console.log(graph)
     // graph.setAnnotations([
     //   {
     //     series: channel.standardLabel,

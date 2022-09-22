@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Graph from 'components/Graph';
 import Range from 'components/Range';
-import Hypnogram from 'components/Hypnogram';
+// import Hypnogram from 'components/Hypnogram';
 
 const time = date => new Date(date).toLocaleTimeString().replace(' AM', '');
 
@@ -366,12 +366,12 @@ export default class EdfView extends Component {
         dateWindow={this.state.dateWindow}
         onChange={this.updateDateWindow}
       />,
-      <Hypnogram
-        key="hypnogram"
-        start={header.start}
-        end={header.end}
-        dateWindow={this.state.dateWindow}
-      />,
+      // <Hypnogram
+      //   key="hypnogram"
+      //   start={header.start}
+      //   end={header.end}
+      //   dateWindow={this.state.dateWindow}
+      // />,
       <div key="graphs" className="graphs" ref={setGraphWrapper}>
         {height && channels.map((channel) =>
           <Graph
