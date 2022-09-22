@@ -37,8 +37,8 @@ export default class Graph extends Component {
 
   componentDidMount() {
     if (this.container) this.createGraph();
-    console.log('markerData from graph component',this.props.markerData)
-    console.log('annotation from graph component',this.props.annotationData)
+    // console.log('markerData from graph component',this.props.markerData)
+    // console.log('annotation from graph component',this.props.annotationData)
   }
 
   componentDidUpdate(prevProps) {
@@ -69,7 +69,7 @@ export default class Graph extends Component {
     }
   }
 
-  getOptions = (markerData) => {
+  getOptions = (markerData, annotationData) => {
     const { channel, dateWindow, height, minRange, maxRange } = this.props;
     // console.log('anno data: ',this.props.annotationData)
     return {
@@ -120,19 +120,22 @@ export default class Graph extends Component {
 
       underlayCallback: function(canvas, area, g) {
 
-        function highlight_period(x_color, x_start, x_end) {
+        function highlight_period(x_color, x_start, x_end,label) {
           var bottom_left = g.toDomCoords(x_start);
           let x_end_updated = (Number(x_end)+2).toString();
           var top_right = g.toDomCoords(x_end_updated);
   
           var left = bottom_left[0];
           var right = top_right[0];
-  
+          console.log(label)
+          
           canvas.fillStyle = x_color;
+          canvas.fillText(label, 70, 70)
           canvas.fillRect(left, area.y, right - left, area.h);
         }
         
-        markerData.map(marker => highlight_period(marker[2], marker[0], marker[0]))
+        markerData.map(marker => highlight_period(marker[2], marker[0], marker[0], marker[1]))
+        annotationData.map(annotate => highlight_period(annotate[3], annotate[0], annotate[1], annotate[2]))
       }
 
   
@@ -148,7 +151,7 @@ export default class Graph extends Component {
 
   createGraph = () => {
     const { channel, dateWindow } = this.props;
-    const options = this.getOptions(this.props.markerData);
+    const options = this.getOptions(this.props.markerData, this.props.annotationData);
     const value = [dateWindow[0], [channel.physicalMinimum, 0, channel.physicalMaximum]];
     const graph = new Dygraph(this.container, [value], options);
     // console.log(graph)
