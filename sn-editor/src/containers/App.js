@@ -89,7 +89,7 @@ export default class App extends Component {
     // annotations file specific
     Papa.parse(annotationFile,{
       header:false,
-      delimiter:"\t",
+      delimiter:",",
       complete:(results)=>{
        ad = results.data.slice(1)
       }
@@ -98,11 +98,12 @@ export default class App extends Component {
     // marker file specific
     Papa.parse(markerFile,{
       header: false,
-      delimiter: "\t",
+      delimiter: ",",
       complete:(results)=>{
         md = results.data.slice(1)
       }
     });
+    console.log(md)
 
     this.setState({markerData:md,annotationData:ad})
   }
