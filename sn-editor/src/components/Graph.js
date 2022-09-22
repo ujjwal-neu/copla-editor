@@ -121,17 +121,19 @@ export default class Graph extends Component {
       underlayCallback: function(canvas, area, g) {
 
         function highlight_period(x_color, x_start, x_end,label) {
+          console.log('the label is ',label)
           var bottom_left = g.toDomCoords(x_start);
           let x_end_updated = (Number(x_end)+2).toString();
           var top_right = g.toDomCoords(x_end_updated);
   
           var left = bottom_left[0];
           var right = top_right[0];
-          console.log(label)
           
           canvas.fillStyle = x_color;
-          canvas.fillText(label, 70, 70)
+
           canvas.fillRect(left, area.y, right - left, area.h);
+          canvas.fillStyle = 'black'
+          canvas.fillText(label, left, 70)
         }
         
         markerData.map(marker => highlight_period(marker[2], marker[0], marker[0], marker[1]))
