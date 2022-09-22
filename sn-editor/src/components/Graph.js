@@ -69,9 +69,9 @@ export default class Graph extends Component {
     }
   }
 
-  getOptions = () => {
+  getOptions = (markerData) => {
     const { channel, dateWindow, height, minRange, maxRange } = this.props;
-    console.log('anno data: ',this.props.annotationData)
+    // console.log('anno data: ',this.props.annotationData)
     return {
       dateWindow,
       // TODO toggle dynamic range / physical range ???
@@ -122,7 +122,8 @@ export default class Graph extends Component {
 
         function highlight_period(x_color, x_start, x_end) {
           var bottom_left = g.toDomCoords(x_start);
-          var top_right = g.toDomCoords(x_end);
+          let x_end_updated = (Number(x_end)+2).toString();
+          var top_right = g.toDomCoords(x_end_updated);
   
           var left = bottom_left[0];
           var right = top_right[0];
@@ -131,10 +132,7 @@ export default class Graph extends Component {
           canvas.fillRect(left, area.y, right - left, area.h);
         }
         
-
-        highlight_period("blue", 1661757775556.7, 1661757775557.7);
-        highlight_period("red", 1661757775845.36, 1661757775846.36);
-        highlight_period("black", 1661757776520.62, 1661757776521.62);
+        markerData.map(marker => highlight_period(marker[2], marker[0], marker[0]))
       }
 
   
@@ -150,7 +148,7 @@ export default class Graph extends Component {
 
   createGraph = () => {
     const { channel, dateWindow } = this.props;
-    const options = this.getOptions();
+    const options = this.getOptions(this.props.markerData);
     const value = [dateWindow[0], [channel.physicalMinimum, 0, channel.physicalMaximum]];
     const graph = new Dygraph(this.container, [value], options);
     // console.log(graph)
