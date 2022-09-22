@@ -130,7 +130,6 @@ export default class Graph extends Component {
           var right = top_right[0];
           
           canvas.fillStyle = x_color;
-
           canvas.fillRect(left, area.y, right - left, area.h);
           canvas.fillStyle = 'black'
           canvas.fillText(label, left, 70)
