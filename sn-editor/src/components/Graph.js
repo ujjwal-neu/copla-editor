@@ -132,7 +132,9 @@ export default class Graph extends Component {
           canvas.fillStyle = x_color;
           canvas.fillRect(left, area.y, right - left, area.h);
           canvas.fillStyle = 'black'
-          canvas.fillText(label, left, 70)
+          if (channel.index === 8){
+            canvas.fillText(label, left, 70)
+          }
         }
         
         markerData.map(marker => highlight_period(marker[2], marker[0], marker[0], marker[1]))
