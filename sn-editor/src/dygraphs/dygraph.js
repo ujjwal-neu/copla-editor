@@ -1057,6 +1057,7 @@ class Dygraph {
     * @private
     */
   createDragInterface_() {
+    console.log('drag interface created')
     const context = {
       // Tracks whether the mouse is down right now
       isZooming: false,
@@ -1116,6 +1117,7 @@ class Dygraph {
         contextB.dragStartY = utils.dragGetY_(event, contextB);
         contextB.cancelNextDblclick = false;
         contextB.tarp.cover();
+        
       },
       destroy() {
         const context = this;
@@ -1197,6 +1199,7 @@ class Dygraph {
 
     // Clean up from the previous rect if necessary
     if (prevDirection == utils.HORIZONTAL) {
+      ctx.fillStyle='black'
       ctx.clearRect(Math.min(startX, prevEndX), this.layout_.getPlotArea().y,
         Math.abs(startX - prevEndX), this.layout_.getPlotArea().h);
     }
@@ -1209,6 +1212,7 @@ class Dygraph {
     if (direction == utils.HORIZONTAL) {
       if (endX && startX) {
         ctx.fillStyle = 'rgba(128,128,128,0.33)';
+        // ctx.fillStyle = 'black'
         ctx.fillRect(Math.min(startX, endX), this.layout_.getPlotArea().y,
           Math.abs(endX - startX), this.layout_.getPlotArea().h);
       }

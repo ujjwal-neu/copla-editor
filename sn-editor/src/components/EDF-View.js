@@ -170,7 +170,7 @@ export default class EdfView extends Component {
         band.end,
       ]),
     );
-    console.log(events)
+   
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet([header, ...events]);
     const sheetName = 'events';

@@ -121,7 +121,6 @@ export default class Graph extends Component {
       underlayCallback: function(canvas, area, g) {
 
         function highlight_period(x_color, x_start, x_end,label) {
-          console.log('the label is ',label)
           var bottom_left = g.toDomCoords(x_start);
           let x_end_updated = (Number(x_end)+2).toString();
           var top_right = g.toDomCoords(x_end_updated);

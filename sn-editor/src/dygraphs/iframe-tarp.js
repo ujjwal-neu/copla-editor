@@ -43,7 +43,6 @@ IFrameTarp.prototype.cover = function () {
     const y = pos.y;
     const width = iframe.offsetWidth;
     const height = iframe.offsetHeight;
-
     const div = document.createElement('div');
     div.style.position = 'absolute';
     div.style.left = `${x}px`;
@@ -51,6 +50,7 @@ IFrameTarp.prototype.cover = function () {
     div.style.width = `${width}px`;
     div.style.height = `${height}px`;
     div.style.zIndex = 999;
+    
     document.body.appendChild(div);
     this.tarps.push(div);
   }
