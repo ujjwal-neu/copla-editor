@@ -9,6 +9,7 @@ import Sidebar from 'components/Sidebar';
 import FileBrowser from 'components/FileBrowser';
 import Bundle from 'utils/ResourceBundle';
 import Papa from 'papaparse'
+import AnnotationSelect from '../components/AnnotationSelect';
 
 export default class App extends Component {
 
@@ -27,10 +28,8 @@ export default class App extends Component {
 
   async componentDidMount() {
     const params = queryString.parse(window.location.search);
-    console.log(params);
     const edf = params.edf;
     const artifacts = params.artifacts;
-    console.log(artifacts);
     if (edf) {
       const bundle = await new Bundle({ edf, artifacts }).load;
       this.setState({ bundles: [bundle], activeBundle: bundle });
@@ -210,6 +209,7 @@ export default class App extends Component {
             onSelect={this.handleSelect}
             onUpload={this.handleUpload}
           />
+          <AnnotationSelect />
         </Sidebar>
         <div className="edf-wrapper" style={{ maxWidth: `calc(100% - ${sidebarWidth})` }}>
           {edf
