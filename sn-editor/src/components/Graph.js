@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Dygraph from '../dygraphs/dygraph';
+import * as utils from '../dygraphs/dygraph-utils';
+
 
 const typeMap = {
   H: 'Hypopnoe',
@@ -37,8 +39,6 @@ export default class Graph extends Component {
 
   componentDidMount() {
     if (this.container) this.createGraph();
-    // console.log('markerData from graph component',this.props.markerData)
-    // console.log('annotation from graph component',this.props.annotationData)
   }
 
   componentDidUpdate(prevProps) {
@@ -58,6 +58,7 @@ export default class Graph extends Component {
     if((this.props.minRange!== prevProps.minRange) || (this.props.maxRange!== prevProps.maxRange)) {
       this.createGraph();
     }
+    
   }
 
   componentWillUnmount() {
@@ -127,18 +128,23 @@ export default class Graph extends Component {
   
           var left = bottom_left[0];
           var right = top_right[0];
-          console.log(label)
           
           canvas.fillStyle = x_color;
-          canvas.fillText(label, 70, 70)
           canvas.fillRect(left, area.y, right - left, area.h);
+          canvas.textAlign = "center";
+          canvas.fillStyle = "black";
+          canvas.font=("15px Arial")
+          
+          if(channel.index === 8)
+          canvas.fillText(label, (left+right)/2, 100);         
+         
         }
         
         markerData.map(marker => highlight_period(marker[2], marker[0], marker[0], marker[1]))
         annotationData.map(annotate => highlight_period(annotate[3], annotate[0], annotate[1], annotate[2]))
       }
 
-  
+     
     };
   }
 
@@ -178,6 +184,39 @@ export default class Graph extends Component {
     span.className = 'graph-label';
     span.innerText = channel.label;
     this.container.append(span);
+
+ 
+  }
+
+  drawZoomRect_(direction, startX, endX, startY, endY, prevDirection, prevEndX, prevEndY) {
+    const ctx = this.canvas_ctx_;
+    console.log(startX)
+    // Clean up from the previous rect if necessary
+    if (prevDirection === utils.HORIZONTAL) {
+      ctx.clearRect(Math.min(startX, prevEndX), this.layout_.getPlotArea().y,
+        Math.abs(startX - prevEndX), this.layout_.getPlotArea().h);
+    }
+    else if (prevDirection === utils.VERTICAL) {
+      ctx.clearRect(this.layout_.getPlotArea().x, Math.min(startY, prevEndY),
+        this.layout_.getPlotArea().w, Math.abs(startY - prevEndY));
+    }
+    console.log(startX, endX)
+    // Draw a light-grey rectangle to show the new viewing area
+    if (direction === utils.HORIZONTAL) {
+      if (endX && startX) {
+        
+        ctx.fillStyle = 'rgba(128,128,128,0.33)';
+        ctx.fillRect(Math.min(startX, endX), this.layout_.getPlotArea().y,
+          Math.abs(endX - startX), this.layout_.getPlotArea().h);
+      }
+    }
+    else if (direction === utils.VERTICAL) {
+      if (endY && startY) {
+        ctx.fillStyle = 'rgba(128,128,128,0.33)';
+        ctx.fillRect(this.layout_.getPlotArea().x, Math.min(startY, endY),
+          this.layout_.getPlotArea().w, Math.abs(endY - startY));
+      }
+    }
   }
 
   addPlotbands(graph, artifacts) {
@@ -239,7 +278,6 @@ export default class Graph extends Component {
     const ref = el => this.container = el;
     const style = { width: '100%' };
 
-    // console.log(this.graph);
     return <div ref={ref} style={style} />;
   }
 
