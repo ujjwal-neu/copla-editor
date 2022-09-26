@@ -24,7 +24,8 @@ export default class Graph extends Component {
     minRange: PropTypes.number,
     maxRange: PropTypes.number,
     markerData:PropTypes.array,
-    annotationData:PropTypes.array
+    annotationData:PropTypes.array,
+    currentLabel:PropTypes.object
   }
 
   static defaultProps = {
@@ -38,15 +39,12 @@ export default class Graph extends Component {
   minHeight = 60
 
   componentDidMount() {
-
-    console.log(this.props)
     if (this.container) this.createGraph();
   }
 
   componentDidUpdate(prevProps) {
-
     if (!this.graph) return;
- 
+ this.graph.currentLabel=this.props.currentLabel
 
     if (this.props.dateWindow !== prevProps.dateWindow) {
       this.graph.dateWindow_ = this.props.dateWindow;
@@ -161,9 +159,8 @@ export default class Graph extends Component {
     const { channel, dateWindow } = this.props;
     const options = this.getOptions(this.props.markerData, this.props.annotationData);
     const value = [dateWindow[0], [channel.physicalMinimum, 0, channel.physicalMaximum]];
-    const graph = new Dygraph(this.container, [value], options);
-    console.log(graph.dragStartX)
-    // console.log(graph)
+    const graph = new Dygraph(this.container, [value], options,this.props.currentLabel);
+
     // graph.setAnnotations([
     //   {
     //     series: channel.standardLabel,

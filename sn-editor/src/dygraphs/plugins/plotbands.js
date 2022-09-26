@@ -13,6 +13,7 @@ export default class PlotBands {
   minWidth = 15; // minimal width a selection has to have to become a plotband
 
   constructor() {
+    
     this.interactions = {
       mousedown(event, graph, ctx) {
         console.log('plotband mouse down')
@@ -100,10 +101,10 @@ export default class PlotBands {
   }
 
   add(graph, options) {
-    console.log('options are:',options)
+    
     options.graph = graph;
-    let note = window.prompt('annotation description')
-    options.note = note
+    options.note = graph.currentLabel.label
+    options.noteColor = graph.currentLabel.color
     const band = new Band(options);
     graph.bands.push(band);
   }

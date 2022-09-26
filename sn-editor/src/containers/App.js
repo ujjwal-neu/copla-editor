@@ -230,7 +230,7 @@ findSetSelectedLabel = (label) => {
         </Sidebar>
         <div className="edf-wrapper" style={{ maxWidth: `calc(100% - ${sidebarWidth})` }}>
           {edf
-            ? <EDF annotationData={this.state.annotationData}  markerData={this.state.markerData} key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation} allLabels={this.state.allLabels} />
+            ? <EDF annotationData={this.state.annotationData} markerData={this.state.markerData} currentLabel={this.state.selectedLabel} key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation} allLabels={this.state.allLabels} />
             : <p className="alert alert-info">Select an EDF file to display it.</p>
           }
         </div>

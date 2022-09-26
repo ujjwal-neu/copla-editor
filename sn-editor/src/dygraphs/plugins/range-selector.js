@@ -31,7 +31,7 @@ class rangeSelector {
    }
 
    activate(dygraph) {
-      console.log('range active')
+      
       this.dygraph_ = dygraph;
       if (this.getOption_('showRangeSelector')) {
          this.createInterface_();

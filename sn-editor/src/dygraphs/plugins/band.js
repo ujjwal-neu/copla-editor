@@ -6,7 +6,7 @@ const typeMap = {
 };
 
 export default class Band {
-  constructor({ graph, start, end, type = '', note = '', isEditing = false, isEditable = true }) {
+  constructor({ graph, start, end, type = '', note = '',noteColor="", isEditing = false, isEditable = true }) {
     if (!graph) throw new Error('no graph given');
 
     this.graph = graph;
@@ -14,6 +14,7 @@ export default class Band {
     this.end = end;
     this.type = type;
     this.note = note;
+    this.noteColor=noteColor
     this.isEditing = isEditing;
     this.isEditable = isEditable;
   }
@@ -46,7 +47,8 @@ export default class Band {
     const right = graph.toDomXCoord(end);
 
     // draw Area
-    ctx.fillStyle = this.isEditable ? 'hsla(55, 100%, 50%, 0.4)' : 'hsla(200, 100%, 50%, 0.4)';
+    // ctx.fillStyle = this.isEditable ? 'hsla(55, 100%, 50%, 0.4)' : 'hsla(200, 100%, 50%, 0.4)';
+    ctx.fillStyle=this.noteColor
     ctx.fillRect(left, area.y, right - left, area.h);
     // draw Type
     ctx.font = '24px serif';

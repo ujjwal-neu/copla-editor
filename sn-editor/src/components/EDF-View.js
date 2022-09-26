@@ -16,7 +16,8 @@ export default class EdfView extends Component {
     onNewAnnotation: PropTypes.func,
     markerData: PropTypes.array,
     annotationData: PropTypes.array,
-    allLabels: PropTypes.array
+    allLabels: PropTypes.array,
+    currentLabel:PropTypes.object
   }
 
   static defaultProps = {
@@ -312,7 +313,7 @@ export default class EdfView extends Component {
       }
     }
 
-    console.log('\tupdate | buffer is', { left: time(bufferRange[0]), right: time(bufferRange[1]) });
+    // console.log('\tupdate | buffer is', { left: time(bufferRange[0]), right: time(bufferRange[1]) });
 
     await this.setStateAsync({ data, bufferRange });
     this.isLoading = false;
@@ -361,7 +362,6 @@ export default class EdfView extends Component {
     //     )}
     //   </div>
     // );
-    console.log(this.allLabels)
    
     return [
       <Range
@@ -382,6 +382,7 @@ export default class EdfView extends Component {
           <Graph
             annotationData={this.props.annotationData}
             markerData={this.props.markerData}
+            currentLabel={this.props.currentLabel}
             key={`${channel.label}-${channel.index}`}
             channel={channel}
             frequency={frequency}

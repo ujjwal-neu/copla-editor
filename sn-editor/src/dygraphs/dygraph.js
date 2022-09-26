@@ -86,8 +86,8 @@ import RangeSelectorPlugin from './plugins/range-selector';
  * options, see http://dygraphs.com/options.html.
  */
 class Dygraph {
-  constructor(div, data, opts) {
-    this.__init__(div, data, opts);
+  constructor(div, data, opts,currentLabel) {
+    this.__init__(div, data, opts,currentLabel);
   }
 
   /**
@@ -99,7 +99,8 @@ class Dygraph {
     * @param {Object} attrs Miscellaneous other options
     * @private
     */
-  __init__(div, file, attrs) {
+  __init__(div, file, attrs,currentLabel) {
+    this.currentLabel = currentLabel
     this.is_initial_draw_ = true;
     this.readyFns_ = [];
 
@@ -1057,7 +1058,6 @@ class Dygraph {
     * @private
     */
   createDragInterface_() {
-    console.log('drag interface created')
     const context = {
       // Tracks whether the mouse is down right now
       isZooming: false,
