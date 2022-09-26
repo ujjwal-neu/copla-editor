@@ -136,11 +136,11 @@ export default class Graph extends Component {
           canvas.fillRect(left, area.y, right - left, area.h);
           canvas.textAlign = "center";
           canvas.fillStyle = "black";
-          canvas.font=("15px Arial")
+          canvas.font=("12px Arial")
           
           if(channel.index === 8)
           canvas.fillText(label, (left+right)/2, 70);         
-     
+         
         }
         markerData.map(marker => highlight_period(marker[2], marker[0], marker[0], marker[1]))
         annotationData.map(annotate => highlight_period(annotate[3], annotate[0], annotate[1], annotate[2]))

@@ -1,18 +1,19 @@
 import React from 'react'
 
-const AnnotationSelect = () => {
+const AnnotationSelect = ({allLabels, newlabelRef, newcolorRef, handleConfirm}) => {
     const [showNew,setShowNew] =React.useState(false)
-    const [allLabels,setLabels]= React.useState([{label:"Bad",color:"#ff0000"},{label:"Good",color:"#00ff00"}])
-    const newlabelRef = React.useRef(null)
-    const newcolorRef = React.useRef(null)
+    // const [allLabels,setLabels]= React.useState([{label:"Bad",color:"#ff0000"},{label:"Good",color:"#00ff00"}])
+    // const newlabelRef = React.useRef(null)
+    // const newcolorRef = React.useRef(null)
     const handleshownew = ()=>{
         setShowNew(!showNew)
     }
-    const handleConfirm = ()=>{
-        if (newlabelRef.current.value.trim() === "") return
-        setLabels([...allLabels,{label:newlabelRef.current.value,color:newcolorRef.current.value}])
-        newlabelRef.current.value=""
-    }
+    // const handleConfirm = ()=>{
+    //     if (newlabelRef.current.value.trim() === "") return
+    //     setLabels([...allLabels,{label:newlabelRef.current.value,color:newcolorRef.current.value}])
+    //     newlabelRef.current.value=""
+    // }
+   
   return (
     <div>
         <h4>Select Annotation</h4>
