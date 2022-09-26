@@ -14,8 +14,9 @@ export default class EdfView extends Component {
     artifacts: PropTypes.object,
     controls: PropTypes.object,
     onNewAnnotation: PropTypes.func,
-    markerData:PropTypes.array,
-    annotationData:PropTypes.array
+    markerData: PropTypes.array,
+    annotationData: PropTypes.array,
+    allLabels: PropTypes.array
   }
 
   static defaultProps = {
@@ -360,7 +361,7 @@ export default class EdfView extends Component {
     //     )}
     //   </div>
     // );
-
+    console.log(this.allLabels)
    
     return [
       <Range

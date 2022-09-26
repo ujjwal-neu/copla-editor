@@ -13,6 +13,9 @@ import AnnotationSelect from '../components/AnnotationSelect';
 
 export default class App extends Component {
 
+  newlabelRef = React.createRef(null)
+  newcolorRef = React.createRef(null)
+
   state = {
     bundles: [],
     activeBundle: null,
@@ -20,9 +23,9 @@ export default class App extends Component {
     loggedIn: false,
     isInfoboxVisible: false,
     markerData:[],
-    annotationData:[]
+    annotationData:[],
+    allLabels: [{label:"Bad",color:"#ff0000"},{label:"Good",color:"#00ff00"}]
   }
-
 
   proxy = { onClick() {} }
 
@@ -102,14 +105,13 @@ export default class App extends Component {
         md = results.data.slice(1)
       }
     });
-    console.log(md)
+    // console.log(md)
 
     this.setState({markerData:md,annotationData:ad})
   }
   filesParser()
 
   }
-
 
 
   renderfileoption (wrapperClass='',){
@@ -186,10 +188,17 @@ export default class App extends Component {
     this.setState({ isInfoboxVisible: !isInfoboxVisible });
   };
 
+  handleConfirm = ()=>{
+    if (this.newlabelRef.current.value.trim() === "") return
+    this.setState({allLabels: [...this.state.allLabels,{label: this.newlabelRef.current.value,color: this.newcolorRef.current.value}] })
+    this.newlabelRef.current.value=""
+}
+
   renderEditor() {
     const { edf, artifacts } = this.state.activeBundle || {};
     const sidebarWidth = this.state.showSidebar ? '20rem' : '0rem';
     const uploadBundles = this.state.bundles.filter(b => b.uploadStatus);
+    // console.log(this.newlabelRef)
     return (
       <div style={{ display: 'flex', maxWidth: '100%' }}>
         <Sidebar
@@ -209,11 +218,11 @@ export default class App extends Component {
             onSelect={this.handleSelect}
             onUpload={this.handleUpload}
           />
-          <AnnotationSelect />
+          <AnnotationSelect allLabels={this.state.allLabels} newlabelRef={this.newlabelRef} newcolorRef={this.newcolorRef} handleConfirm={this.handleConfirm} />
         </Sidebar>
         <div className="edf-wrapper" style={{ maxWidth: `calc(100% - ${sidebarWidth})` }}>
           {edf
-            ? <EDF annotationData={this.state.annotationData}  markerData={this.state.markerData} key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation}  />
+            ? <EDF annotationData={this.state.annotationData}  markerData={this.state.markerData} key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation} allLabels={this.state.allLabels} />
             : <p className="alert alert-info">Select an EDF file to display it.</p>
           }
         </div>
@@ -227,6 +236,8 @@ export default class App extends Component {
     const hasActiveBundle = !!this.state.activeBundle;
     const containerClass = `container ${hasBundle ? 'full-width' : ''}`;
     const isInfoboxVisible = this.state.isInfoboxVisible;
+
+    console.log(this.state.allLabels)
 
     return (
       <div className={containerClass}>

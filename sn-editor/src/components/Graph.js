@@ -133,10 +133,10 @@ export default class Graph extends Component {
           canvas.fillRect(left, area.y, right - left, area.h);
           canvas.textAlign = "center";
           canvas.fillStyle = "black";
-          canvas.font=("15px Arial")
+          canvas.font=("12px Arial")
           
           if(channel.index === 8)
-          canvas.fillText(label, (left+right)/2, 100);         
+          canvas.fillText(label, (left+right)/2, 70);         
          
         }
         
