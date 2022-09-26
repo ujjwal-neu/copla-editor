@@ -38,10 +38,13 @@ export default class Graph extends Component {
   minHeight = 60
 
   componentDidMount() {
+
+    console.log(this.props)
     if (this.container) this.createGraph();
   }
 
   componentDidUpdate(prevProps) {
+
     if (!this.graph) return;
  
 
@@ -136,10 +139,9 @@ export default class Graph extends Component {
           canvas.font=("15px Arial")
           
           if(channel.index === 8)
-          canvas.fillText(label, (left+right)/2, 100);         
-         
+          canvas.fillText(label, (left+right)/2, 70);         
+     
         }
-        
         markerData.map(marker => highlight_period(marker[2], marker[0], marker[0], marker[1]))
         annotationData.map(annotate => highlight_period(annotate[3], annotate[0], annotate[1], annotate[2]))
       }
@@ -190,7 +192,6 @@ export default class Graph extends Component {
 
   drawZoomRect_(direction, startX, endX, startY, endY, prevDirection, prevEndX, prevEndY) {
     const ctx = this.canvas_ctx_;
-    console.log(startX)
     // Clean up from the previous rect if necessary
     if (prevDirection === utils.HORIZONTAL) {
       ctx.clearRect(Math.min(startX, prevEndX), this.layout_.getPlotArea().y,
@@ -200,7 +201,6 @@ export default class Graph extends Component {
       ctx.clearRect(this.layout_.getPlotArea().x, Math.min(startY, prevEndY),
         this.layout_.getPlotArea().w, Math.abs(startY - prevEndY));
     }
-    console.log(startX, endX)
     // Draw a light-grey rectangle to show the new viewing area
     if (direction === utils.HORIZONTAL) {
       if (endX && startX) {
@@ -222,7 +222,6 @@ export default class Graph extends Component {
   addPlotbands(graph, artifacts) {
     if (!artifacts) return;
     artifacts.forEach(({ type, starttime, endtime }) => {
-      console.log(type, starttime, endtime);
       if (type in typeMap) type = typeMap[type];
       graph.addBand({
         start: starttime,

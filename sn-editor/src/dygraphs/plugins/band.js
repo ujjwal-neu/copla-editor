@@ -54,8 +54,7 @@ export default class Band {
     ctx.fillText(typeMap[type] || type, left + 8, 24); // magic numbers, looks right
     // draw Note
     ctx.font = '14px serif';
-    ctx.fillText(note, left + 8, area.h - 8);
-
+    ctx.fillText(note, left + 15, area.h - 8);
     if (isEditing) this.startEditing();
   }
 

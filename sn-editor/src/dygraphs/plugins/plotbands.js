@@ -15,11 +15,13 @@ export default class PlotBands {
   constructor() {
     this.interactions = {
       mousedown(event, graph, ctx) {
+        console.log('plotband mouse down')
         ctx.dragEndX = null; // is set on the first click and creates a ghost plotband
         ctx.initializeMouseDown(event, graph, ctx);
       },
       mousemove: DygraphInteraction.moveZoom,
       mouseup: (event, graph, ctx) => {
+        console.log('plotband mouse up')
         graph.clearZoomRect_();
         ctx.isZooming = false;
 
@@ -98,7 +100,10 @@ export default class PlotBands {
   }
 
   add(graph, options) {
+    console.log('options are:',options)
     options.graph = graph;
+    let note = window.prompt('annotation de scription')
+    options.note = note
     const band = new Band(options);
     graph.bands.push(band);
   }
