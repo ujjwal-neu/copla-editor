@@ -10,6 +10,7 @@ import FileBrowser from 'components/FileBrowser';
 import Bundle from 'utils/ResourceBundle';
 import Papa from 'papaparse'
 import AnnotationSelect from '../components/AnnotationSelect';
+import PlotBands from '../dygraphs/plugins/plotbands';
 
 export default class App extends Component {
 
@@ -24,7 +25,8 @@ export default class App extends Component {
     isInfoboxVisible: false,
     markerData:[],
     annotationData:[],
-    allLabels: [{label:"Bad",color:"#ff0000"},{label:"Good",color:"#00ff00"}]
+    allLabels: [{label:"Bad",color:"#ff0000"},{label:"Good",color:"#00ff00"}],
+    selectedLabel: {label:"Bad",color:"#ff0000"}
   }
 
   proxy = { onClick() {} }
@@ -194,6 +196,12 @@ export default class App extends Component {
     this.newlabelRef.current.value=""
 }
 
+findSetSelectedLabel = (label) => {
+  let obj =  this.state.allLabels.find(obj => obj.label === label)
+  // this.setSelectedLabel(obj)
+  this.setState({selectedLabel: obj})
+  }
+
   renderEditor() {
     const { edf, artifacts } = this.state.activeBundle || {};
     const sidebarWidth = this.state.showSidebar ? '20rem' : '0rem';
@@ -218,7 +226,7 @@ export default class App extends Component {
             onSelect={this.handleSelect}
             onUpload={this.handleUpload}
           />
-          <AnnotationSelect allLabels={this.state.allLabels} newlabelRef={this.newlabelRef} newcolorRef={this.newcolorRef} handleConfirm={this.handleConfirm} />
+          <AnnotationSelect allLabels={this.state.allLabels} newlabelRef={this.newlabelRef} newcolorRef={this.newcolorRef} handleConfirm={this.handleConfirm} selectedLabel={this.selectedLabel} findSetSelectedLabel={this.findSetSelectedLabel} />
         </Sidebar>
         <div className="edf-wrapper" style={{ maxWidth: `calc(100% - ${sidebarWidth})` }}>
           {edf
@@ -237,7 +245,9 @@ export default class App extends Component {
     const containerClass = `container ${hasBundle ? 'full-width' : ''}`;
     const isInfoboxVisible = this.state.isInfoboxVisible;
 
-    console.log(this.state.allLabels)
+    console.log(this.state)
+    // console.log(this.newlabelRef, this.newcolorRef)
+    // console.log(PlotBands)
 
     return (
       <div className={containerClass}>

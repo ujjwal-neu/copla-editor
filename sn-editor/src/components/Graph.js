@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Dygraph from '../dygraphs/dygraph';
-import * as utils from '../dygraphs/dygraph-utils';
+// import * as utils from '../dygraphs/dygraph-utils';
 
 
 const typeMap = {
@@ -162,6 +162,7 @@ export default class Graph extends Component {
     const options = this.getOptions(this.props.markerData, this.props.annotationData);
     const value = [dateWindow[0], [channel.physicalMinimum, 0, channel.physicalMaximum]];
     const graph = new Dygraph(this.container, [value], options);
+    console.log(graph.dragStartX)
     // console.log(graph)
     // graph.setAnnotations([
     //   {
@@ -190,34 +191,34 @@ export default class Graph extends Component {
  
   }
 
-  drawZoomRect_(direction, startX, endX, startY, endY, prevDirection, prevEndX, prevEndY) {
-    const ctx = this.canvas_ctx_;
-    // Clean up from the previous rect if necessary
-    if (prevDirection === utils.HORIZONTAL) {
-      ctx.clearRect(Math.min(startX, prevEndX), this.layout_.getPlotArea().y,
-        Math.abs(startX - prevEndX), this.layout_.getPlotArea().h);
-    }
-    else if (prevDirection === utils.VERTICAL) {
-      ctx.clearRect(this.layout_.getPlotArea().x, Math.min(startY, prevEndY),
-        this.layout_.getPlotArea().w, Math.abs(startY - prevEndY));
-    }
-    // Draw a light-grey rectangle to show the new viewing area
-    if (direction === utils.HORIZONTAL) {
-      if (endX && startX) {
+  // drawZoomRect_(direction, startX, endX, startY, endY, prevDirection, prevEndX, prevEndY) {
+  //   const ctx = this.canvas_ctx_;
+  //   // Clean up from the previous rect if necessary
+  //   if (prevDirection === utils.HORIZONTAL) {
+  //     ctx.clearRect(Math.min(startX, prevEndX), this.layout_.getPlotArea().y,
+  //       Math.abs(startX - prevEndX), this.layout_.getPlotArea().h);
+  //   }
+  //   else if (prevDirection === utils.VERTICAL) {
+  //     ctx.clearRect(this.layout_.getPlotArea().x, Math.min(startY, prevEndY),
+  //       this.layout_.getPlotArea().w, Math.abs(startY - prevEndY));
+  //   }
+  //   // Draw a light-grey rectangle to show the new viewing area
+  //   if (direction === utils.HORIZONTAL) {
+  //     if (endX && startX) {
         
-        ctx.fillStyle = 'rgba(128,128,128,0.33)';
-        ctx.fillRect(Math.min(startX, endX), this.layout_.getPlotArea().y,
-          Math.abs(endX - startX), this.layout_.getPlotArea().h);
-      }
-    }
-    else if (direction === utils.VERTICAL) {
-      if (endY && startY) {
-        ctx.fillStyle = 'rgba(128,128,128,0.33)';
-        ctx.fillRect(this.layout_.getPlotArea().x, Math.min(startY, endY),
-          this.layout_.getPlotArea().w, Math.abs(endY - startY));
-      }
-    }
-  }
+  //       ctx.fillStyle = 'rgba(128,128,128,0.33)';
+  //       ctx.fillRect(Math.min(startX, endX), this.layout_.getPlotArea().y,
+  //         Math.abs(endX - startX), this.layout_.getPlotArea().h);
+  //     }
+  //   }
+  //   else if (direction === utils.VERTICAL) {
+  //     if (endY && startY) {
+  //       ctx.fillStyle = 'rgba(128,128,128,0.33)';
+  //       ctx.fillRect(this.layout_.getPlotArea().x, Math.min(startY, endY),
+  //         this.layout_.getPlotArea().w, Math.abs(endY - startY));
+  //     }
+  //   }
+  // }
 
   addPlotbands(graph, artifacts) {
     if (!artifacts) return;

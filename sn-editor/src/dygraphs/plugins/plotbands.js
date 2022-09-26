@@ -102,7 +102,7 @@ export default class PlotBands {
   add(graph, options) {
     console.log('options are:',options)
     options.graph = graph;
-    let note = window.prompt('annotation de scription')
+    let note = window.prompt('annotation description')
     options.note = note
     const band = new Band(options);
     graph.bands.push(band);
