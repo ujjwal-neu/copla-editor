@@ -23,7 +23,8 @@ export default class Graph extends Component {
     minRange: PropTypes.number,
     maxRange: PropTypes.number,
     currentLabel:PropTypes.object,
-    state: PropTypes.object
+    state: PropTypes.object,
+    mode:PropTypes.string,
   }
 
   static defaultProps = {
@@ -43,6 +44,7 @@ export default class Graph extends Component {
   componentDidUpdate(prevProps) {
     if (!this.graph) return;
     this.graph.currentLabel=this.props.currentLabel
+    this.graph.mode=this.props.mode
 
     if (this.props.dateWindow !== prevProps.dateWindow) {
       this.graph.dateWindow_ = this.props.dateWindow;
@@ -120,7 +122,7 @@ export default class Graph extends Component {
       // disable via: Dygraph.prototype.doZoomY_ = (lowY, highY) => null;
 
       underlayCallback: function(canvas, area, g) {
-
+        
         function highlight_period(x_color, x_start, x_end,label) {
           var bottom_left = g.toDomCoords(x_start);
           let x_end_updated = (Number(x_end)+2).toString();

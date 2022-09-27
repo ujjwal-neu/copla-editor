@@ -16,12 +16,14 @@ export default class PlotBands {
     
     this.interactions = {
       mousedown(event, graph, ctx) {
+        if(graph.mode ==='VIEW') return 
         console.log('plotband mouse down')
         ctx.dragEndX = null; // is set on the first click and creates a ghost plotband
         ctx.initializeMouseDown(event, graph, ctx);
       },
       mousemove: DygraphInteraction.moveZoom,
       mouseup: (event, graph, ctx) => {
+        if(graph.mode ==='VIEW') return 
         console.log('plotband mouse up')
         graph.clearZoomRect_();
         ctx.isZooming = false;

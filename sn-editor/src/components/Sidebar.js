@@ -24,7 +24,7 @@ export default class Sidebar extends Component {
 
     return (
       <div className={className} style={{ width }}>
-        <button className="btn btn-default m-b-1" onClick={onClick}>{showSidebar ? '◀' : '▶'}</button>
+        {/* <button className="btn btn-default m-b-1" onClick={onClick}>{showSidebar ? '◀' : '▶'}</button> */}
         <div className="sidebar-content">
           {children}
         </div>

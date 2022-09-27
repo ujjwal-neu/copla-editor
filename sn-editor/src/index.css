@@ -75,3 +75,11 @@
 .infobox tr:nth-child(odd) td {
   background: #ddd;
 }
+
+.controls h5::before {
+  content: "";
+}
+
+.site-title::before{
+  content: "";
+}

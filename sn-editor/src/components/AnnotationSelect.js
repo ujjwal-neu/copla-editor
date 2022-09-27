@@ -11,9 +11,9 @@ const AnnotationSelect = ({allLabels, newlabelRef, newcolorRef, handleConfirm, s
     <div>
         <h4>Select Annotation</h4>
         <div>
-            <select onChange={(e) => {findSetSelectedLabel(e.target.value)}}>
-               {allLabels.map(element=>(
-                <option style={{background:element.color}} value={element.label} label={element.label} key={Math.random()} />
+            <select onChange={(e) => {findSetSelectedLabel(e.target.value)}}  >
+               {allLabels.map((element,i)=>(
+                <option style={{background:element.color}} value={element.label} label={element.label} key={i} />
                ))}
             </select>
         </div>

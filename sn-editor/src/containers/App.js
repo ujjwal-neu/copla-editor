@@ -26,10 +26,12 @@ export default class App extends Component {
     markerData:[],
     annotationData:[],
     allLabels: [{label:"Bad",color:"#ff0000"},{label:"Good",color:"#00ff00"}],
-    selectedLabel: {label:"Bad",color:"#ff0000"}
+    selectedLabel: {label:"Bad",color:"#ff0000"},
+    mode:"VIEW"
   }
 
   proxy = { onClick() {} }
+
 
   async componentDidMount() {
     const params = queryString.parse(window.location.search);
@@ -42,6 +44,7 @@ export default class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log('state mode',this.state.mode)
     if (this.state.showSidebar !== prevState.showSidebar) { // was sidebar shown or hidden, trigger graph resize
       window.dispatchEvent(new Event('resize'));
     }
@@ -124,23 +127,6 @@ export default class App extends Component {
     )
   }
 
-  renderDropzone(wrapperClass = '') {
-    return (
-      <div className={wrapperClass}>
-        <Dropzone
-          onDrop={this.onEdfDrop}
-          multiple
-          disablePreview
-          activeClassName="active"
-          rejectClassName="rejected"
-          className="dropzone truncate"
-        >
-          Drop EDF and Artifacts Files
-        </Dropzone>
-      </div>
-    );
-  }
-
   handleLoginChange = (loggedIn) => {
     this.setState({ loggedIn });
   }
@@ -208,32 +194,26 @@ findSetSelectedLabel = (label) => {
 
   renderEditor() {
     const { edf, artifacts } = this.state.activeBundle || {};
-    const sidebarWidth = this.state.showSidebar ? '20rem' : '0rem';
+    const sidebarWidth = this.state.mode ==='EDIT' ? '20rem' : '0rem';
     const uploadBundles = this.state.bundles.filter(b => b.uploadStatus);
     return (
       <div style={{ display: 'flex', maxWidth: '100%' }}>
-        <Sidebar
-          onToggle={this.handleSidebarToggle}
-          showSidebar={this.state.showSidebar}
-          width={sidebarWidth}
-        >
-          {/* <XNAT
-            onLoginChange={this.handleLoginChange}
-            onNewData={this.handleNewData}
-            onUpdateStatus={this.handleUpdateStatus}
-            bundles={uploadBundles}
-          /> */}
-          <FileBrowser
-            bundles={this.state.bundles}
-            canUpload={this.state.loggedIn}
-            onSelect={this.handleSelect}
-            onUpload={this.handleUpload}
-          />
-          <AnnotationSelect allLabels={this.state.allLabels} newlabelRef={this.newlabelRef} newcolorRef={this.newcolorRef} handleConfirm={this.handleConfirm} selectedLabel={this.selectedLabel} findSetSelectedLabel={this.findSetSelectedLabel} />
-        </Sidebar>
+      {this.state.mode === 'EDIT' && <Sidebar
+        onToggle={this.handleSidebarToggle}
+        showSidebar={this.state.showSidebar}
+        width={sidebarWidth}
+      >
+        <FileBrowser
+          bundles={this.state.bundles}
+          canUpload={this.state.loggedIn}
+          onSelect={this.handleSelect}
+          onUpload={this.handleUpload}
+        />
+        <AnnotationSelect allLabels={this.state.allLabels} newlabelRef={this.newlabelRef} newcolorRef={this.newcolorRef} handleConfirm={this.handleConfirm} selectedLabel={this.selectedLabel} findSetSelectedLabel={this.findSetSelectedLabel} />
+      </Sidebar>}
         <div className="edf-wrapper" style={{ maxWidth: `calc(100% - ${sidebarWidth})` }}>
           {edf
-            ? <EDF annotationData={this.state.annotationData} markerData={this.state.markerData} currentLabel={this.state.selectedLabel} key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation} allLabels={this.state.allLabels} state={this.state} handleAddedEvents={this.handleAddedEvents} />
+            ? <EDF mode={this.state.mode} annotationData={this.state.annotationData} markerData={this.state.markerData} currentLabel={this.state.selectedLabel} key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation} allLabels={this.state.allLabels} state={this.state} handleAddedEvents={this.handleAddedEvents} />
             : <p className="alert alert-info">Select an EDF file to display it.</p>
           }
         </div>
@@ -251,7 +231,7 @@ findSetSelectedLabel = (label) => {
     return (
       <div className={containerClass}>
         <header className="site-header dashed-bottom">
-          <a href="." className="site-title">copla-editor</a>
+          <h3 href="." className="site-title">Neu-editor</h3>
           {hasActiveBundle && (
             <nav>
               <Controls proxy={this.proxy} />
@@ -262,9 +242,14 @@ findSetSelectedLabel = (label) => {
               >
                  <span role="img" aria-label="Zeige">ℹ️️</span>
               </button>
+             
+              <select onChange={(e)=>{this.setState({mode:e.target.value})}}>
+                <option value="VIEW" label='View' />
+                <option value="EDIT" label='Edit' />
+              </select>
             </nav>
           )}
-          {hasBundle && this.renderDropzone('site-nav')}
+         
         </header>
 
         <main className="site-main">
@@ -278,9 +263,6 @@ findSetSelectedLabel = (label) => {
           }
         </main>
 
-        <footer className="site-footer">
-          {/* Gitlab: <a href="https://git.tools.f4.htw-berlin.de/somnonetz/copla-editor">somnonetz/copla-editor</a> */}
-        </footer>
 
         {isInfoboxVisible && (
           <EdfInfoBox

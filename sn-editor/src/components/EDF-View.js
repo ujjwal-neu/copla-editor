@@ -20,6 +20,7 @@ export default class EdfView extends Component {
     currentLabel:PropTypes.object, 
     state: PropTypes.object, 
     handleAddedEvents: PropTypes.func,
+    mode:PropTypes.string
   }
 
   static defaultProps = {
@@ -67,6 +68,7 @@ export default class EdfView extends Component {
     this.loadData(...dateWindow); // load visible area only -- less data but faster
     // this.loadData(start, start + this.chunkWidth); // buffer -- more data but slower
   }
+
 
   componentWillUnmount() {
     this.detachHandlers();
@@ -385,6 +387,7 @@ export default class EdfView extends Component {
       <div key="graphs" className="graphs" ref={setGraphWrapper}>
         {height && channels.map((channel) =>
           <Graph
+            mode={this.props.mode}
             currentLabel={this.props.currentLabel}
             key={`${channel.label}-${channel.index}`}
             channel={channel}
