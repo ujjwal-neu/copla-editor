@@ -10,7 +10,7 @@ import FileBrowser from 'components/FileBrowser';
 import Bundle from 'utils/ResourceBundle';
 import Papa from 'papaparse'
 import AnnotationSelect from '../components/AnnotationSelect';
-import PlotBands from '../dygraphs/plugins/plotbands';
+// import PlotBands from '../dygraphs/plugins/plotbands';
 
 export default class App extends Component {
 
@@ -202,11 +202,14 @@ findSetSelectedLabel = (label) => {
   this.setState({selectedLabel: obj})
   }
 
+  handleAddedEvents = (events) => {
+    this.setState({ ...this.state, annotationData: [...this.state.annotationData, ...events] })
+  }
+
   renderEditor() {
     const { edf, artifacts } = this.state.activeBundle || {};
     const sidebarWidth = this.state.showSidebar ? '20rem' : '0rem';
     const uploadBundles = this.state.bundles.filter(b => b.uploadStatus);
-    // console.log(this.newlabelRef)
     return (
       <div style={{ display: 'flex', maxWidth: '100%' }}>
         <Sidebar
@@ -230,7 +233,7 @@ findSetSelectedLabel = (label) => {
         </Sidebar>
         <div className="edf-wrapper" style={{ maxWidth: `calc(100% - ${sidebarWidth})` }}>
           {edf
-            ? <EDF annotationData={this.state.annotationData} markerData={this.state.markerData} currentLabel={this.state.selectedLabel} key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation} allLabels={this.state.allLabels} />
+            ? <EDF annotationData={this.state.annotationData} markerData={this.state.markerData} currentLabel={this.state.selectedLabel} key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation} allLabels={this.state.allLabels} state={this.state} handleAddedEvents={this.handleAddedEvents} />
             : <p className="alert alert-info">Select an EDF file to display it.</p>
           }
         </div>
@@ -244,10 +247,6 @@ findSetSelectedLabel = (label) => {
     const hasActiveBundle = !!this.state.activeBundle;
     const containerClass = `container ${hasBundle ? 'full-width' : ''}`;
     const isInfoboxVisible = this.state.isInfoboxVisible;
-
-    console.log(this.state)
-    // console.log(this.newlabelRef, this.newcolorRef)
-    // console.log(PlotBands)
 
     return (
       <div className={containerClass}>

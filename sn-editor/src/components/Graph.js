@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Dygraph from '../dygraphs/dygraph';
-// import * as utils from '../dygraphs/dygraph-utils';
 
 
 const typeMap = {
@@ -23,9 +22,8 @@ export default class Graph extends Component {
     onChange: PropTypes.func.isRequired,
     minRange: PropTypes.number,
     maxRange: PropTypes.number,
-    markerData:PropTypes.array,
-    annotationData:PropTypes.array,
-    currentLabel:PropTypes.object
+    currentLabel:PropTypes.object,
+    state: PropTypes.object
   }
 
   static defaultProps = {
@@ -44,7 +42,7 @@ export default class Graph extends Component {
 
   componentDidUpdate(prevProps) {
     if (!this.graph) return;
- this.graph.currentLabel=this.props.currentLabel
+    this.graph.currentLabel=this.props.currentLabel
 
     if (this.props.dateWindow !== prevProps.dateWindow) {
       this.graph.dateWindow_ = this.props.dateWindow;
@@ -60,6 +58,9 @@ export default class Graph extends Component {
       this.createGraph();
     }
     
+    if(this.props.state.annotationData!== prevProps.state.annotationData) {
+      this.createGraph();
+    }
   }
 
   componentWillUnmount() {
@@ -79,8 +80,6 @@ export default class Graph extends Component {
       // TODO toggle dynamic range / physical range ???
       height: Math.max(height, this.minHeight),
       valueRange: [
-        // channel.physicalMinimum - 1, // -1 and +1 so the graph doesn't touch the border and y-labels are correctly drawn
-        // channel.physicalMaximum + 1,
         minRange, maxRange
       ],
       axes: {
@@ -138,14 +137,15 @@ export default class Graph extends Component {
           
           if(channel.index === 8)
           canvas.fillText(label, (left+right)/2, 70);         
-         
+
         }
         markerData.map(marker => highlight_period(marker[2], marker[0], marker[0], marker[1]))
         annotationData.map(annotate => highlight_period(annotate[3], annotate[0], annotate[1], annotate[2]))
       }
 
-     
+    
     };
+     
   }
 
   updateOptions = (options) => {
@@ -157,9 +157,9 @@ export default class Graph extends Component {
 
   createGraph = () => {
     const { channel, dateWindow } = this.props;
-    const options = this.getOptions(this.props.markerData, this.props.annotationData);
+    const options = this.getOptions(this.props.state.markerData, this.props.state.annotationData);
     const value = [dateWindow[0], [channel.physicalMinimum, 0, channel.physicalMaximum]];
-    const graph = new Dygraph(this.container, [value], options,this.props.currentLabel);
+    const graph = new Dygraph(this.container, [value], options, this.props.currentLabel);
 
     // graph.setAnnotations([
     //   {
@@ -170,8 +170,6 @@ export default class Graph extends Component {
     //     tickHeight: 10
     //   }
     //   ]);
-    //   console.log("Highlighted", graph.getHighlightSeries());
-    //   console.log("Label", graph.getLabels());
     graph.name = channel.label;
     graph.draw = graph.drawGraph_.bind(graph);
     graph.cascadeEvents_('clearChart');
@@ -185,37 +183,8 @@ export default class Graph extends Component {
     span.innerText = channel.label;
     this.container.append(span);
 
- 
-  }
 
-  // drawZoomRect_(direction, startX, endX, startY, endY, prevDirection, prevEndX, prevEndY) {
-  //   const ctx = this.canvas_ctx_;
-  //   // Clean up from the previous rect if necessary
-  //   if (prevDirection === utils.HORIZONTAL) {
-  //     ctx.clearRect(Math.min(startX, prevEndX), this.layout_.getPlotArea().y,
-  //       Math.abs(startX - prevEndX), this.layout_.getPlotArea().h);
-  //   }
-  //   else if (prevDirection === utils.VERTICAL) {
-  //     ctx.clearRect(this.layout_.getPlotArea().x, Math.min(startY, prevEndY),
-  //       this.layout_.getPlotArea().w, Math.abs(startY - prevEndY));
-  //   }
-  //   // Draw a light-grey rectangle to show the new viewing area
-  //   if (direction === utils.HORIZONTAL) {
-  //     if (endX && startX) {
-        
-  //       ctx.fillStyle = 'rgba(128,128,128,0.33)';
-  //       ctx.fillRect(Math.min(startX, endX), this.layout_.getPlotArea().y,
-  //         Math.abs(endX - startX), this.layout_.getPlotArea().h);
-  //     }
-  //   }
-  //   else if (direction === utils.VERTICAL) {
-  //     if (endY && startY) {
-  //       ctx.fillStyle = 'rgba(128,128,128,0.33)';
-  //       ctx.fillRect(this.layout_.getPlotArea().x, Math.min(startY, endY),
-  //         this.layout_.getPlotArea().w, Math.abs(endY - startY));
-  //     }
-  //   }
-  // }
+  }
 
   addPlotbands(graph, artifacts) {
     if (!artifacts) return;
@@ -274,7 +243,6 @@ export default class Graph extends Component {
   render() {
     const ref = el => this.container = el;
     const style = { width: '100%' };
-
     return <div ref={ref} style={style} />;
   }
 

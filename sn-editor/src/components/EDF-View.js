@@ -17,13 +17,16 @@ export default class EdfView extends Component {
     markerData: PropTypes.array,
     annotationData: PropTypes.array,
     allLabels: PropTypes.array,
-    currentLabel:PropTypes.object
+    currentLabel:PropTypes.object, 
+    state: PropTypes.object, 
+    handleAddedEvents: PropTypes.func,
   }
 
   static defaultProps = {
     artifacts: {},
     onNewAnnotation: {},
     controls: { onClick() {} },
+    // handleNewAnnotation: {}
     // scale: { onClick() {} },
   }
 
@@ -160,25 +163,27 @@ export default class EdfView extends Component {
     // console.log(file)
 
     // return this.props.onNewAnnotation(file);
-
+// console.log(this.graphs[0].graph.currentLabel)
     
     const XLSX = await import('xlsx');
-    const header = ['Label', 'Start', 'End'];
+    const header = ['Start', 'End', 'Label', 'Color'];
     const events = _.flatMap(this.graphs, graph =>
       graph.graph.bands.map(band => [
-        graph.props.channel.label,
-        // band.type,
         band.start,
         band.end,
+        graph.graph.currentLabel.label,
+        graph.graph.currentLabel.color,
       ]),
     );
    
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet([header, ...events]);
-    const sheetName = 'events';
-    XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    XLSX.writeFile(wb, 'events.xlsx', { compression: true });
-
+    // const wb = XLSX.utils.book_new();
+    // const ws = XLSX.utils.aoa_to_sheet([header, ...events]);
+    // const sheetName = 'events';
+    // XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    // XLSX.writeFile(wb, 'events.xlsx', { compression: true });
+      // this.props.annotationData = [...this.props.annotationData, ...events];
+      
+      this.props.handleAddedEvents(events);
   };
 
   handleTimeButtons = (seconds) => {
@@ -380,8 +385,6 @@ export default class EdfView extends Component {
       <div key="graphs" className="graphs" ref={setGraphWrapper}>
         {height && channels.map((channel) =>
           <Graph
-            annotationData={this.props.annotationData}
-            markerData={this.props.markerData}
             currentLabel={this.props.currentLabel}
             key={`${channel.label}-${channel.index}`}
             channel={channel}
@@ -394,6 +397,7 @@ export default class EdfView extends Component {
             ref={addGraph(channel)}
             minRange={this.state.minRange}
             maxRange={this.state.maxRange}
+            state={this.props.state}
           />
         )}
       </div>
