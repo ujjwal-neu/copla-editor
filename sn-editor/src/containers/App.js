@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+
+import React, { Component, useEffect, useState } from 'react';
 import Dropzone from 'react-dropzone';
 import queryString from 'query-string';
 import EDF from 'components/EDF-View';
@@ -10,12 +11,18 @@ import FileBrowser from 'components/FileBrowser';
 import Bundle from 'utils/ResourceBundle';
 import Papa from 'papaparse'
 import AnnotationSelect from '../components/AnnotationSelect';
+import Swal from 'sweetalert2';
+import { connect } from 'react-redux';
+import {addChanges, changeMode, noChanges} from '../redux/reducers/editorSlice'
+
 // import PlotBands from '../dygraphs/plugins/plotbands';
 
-export default class App extends Component {
+ class App extends Component {
 
   newlabelRef = React.createRef(null)
   newcolorRef = React.createRef(null)
+  edfViewRef = React.createRef()
+  
 
   state = {
     bundles: [],
@@ -27,7 +34,6 @@ export default class App extends Component {
     annotationData:[],
     allLabels: [{label:"Bad",color:"#ff0000"},{label:"Good",color:"#00ff00"}],
     selectedLabel: {label:"Bad",color:"#ff0000"},
-    mode:"VIEW"
   }
 
   proxy = { onClick() {} }
@@ -43,12 +49,11 @@ export default class App extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    console.log('state mode',this.state.mode)
-    if (this.state.showSidebar !== prevState.showSidebar) { // was sidebar shown or hidden, trigger graph resize
-      window.dispatchEvent(new Event('resize'));
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (this.state.showSidebar !== prevState.showSidebar) { // was sidebar shown or hidden, trigger graph resize
+  //     window.dispatchEvent(new Event('resize'));
+  //   }
+  // }
 
   onEdfDrop = async (files = []) => {
     const newBundles = await Promise.all(files
@@ -135,11 +140,87 @@ export default class App extends Component {
     this.setState({ activeBundle });
   }
 
+  // FUNCTIONS RELATED TO CHANGING MODES
+  ChangeMode =  async (mode)=>{
+    await this.detectEditingChange()
+    if (this.props.isEditingChanges){
+    Swal.fire({
+      title: 'Do you want to save the changes?',
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      denyButtonText: `Don't save`,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        // run the save to file functions here
+        this.props.dispatch(changeMode(mode))
+        this.props.dispatch(noChanges())
+        this.saveBandChanges()
+        this.nilchanges()
+        this.discardBandChanges()
+        this.rendermyfile();
+        Swal.fire('Saved!', '', 'success')
+
+      } else if (result.isDenied) {
+        // discard the changes
+        this.props.dispatch(noChanges())
+        this.nilchanges()
+        this.discardBandChanges()
+        this.rendermyfile();
+        this.props.dispatch(changeMode(mode))
+        Swal.fire('Changes are not saved', '', 'info')
+      }
+    })
+  }else{
+    if(mode==='EDIT'){
+      let _annoData = this.state.annotationData;
+      this.setState({annotationData:[]})
+      this.editableBands(_annoData)
+      this.props.dispatch(changeMode(mode))
+    }else if(mode === 'VIEW'){
+      this.rendermyfile();
+      this.props.dispatch(changeMode(mode))
+    }
+  }
+}
+
+
+  editChangesMade = (value)=>{
+    this.setState({editChanges:value})
+  }
+
+  detectEditingChange = async ()=>{
+    let result = this.edfViewRef.current.detectChangesMade()
+    if (result===true){ this.props.dispatch(addChanges())}
+  }
+
+
+  saveBandChanges = ()=>{
+    this.edfViewRef.current.saveBandChanges()
+  }
+
+  nilchanges = ()=>{
+    this.edfViewRef.current.nilChanges();
+  }
+
+  discardBandChanges = ()=>{
+    this.edfViewRef.current.discardBandChanges();
+  }
+
+  editableBands = (annoData)=>{
+    this.edfViewRef.current.editableBands(annoData)
+  }
+
+  ////////////////////////// 
+
+
+
   handleUpload = (bundle) => {
     bundle.uploadStatus = 1; // destined
     this.setState({ bundles: this.state.bundles });
     // pseudonymisierung: ja / nein?
-  }
+  } 
 
   handleUpdateStatus = (bundle, uploadStatus) => {
     bundle.uploadStatus = uploadStatus;
@@ -194,11 +275,11 @@ findSetSelectedLabel = (label) => {
 
   renderEditor() {
     const { edf, artifacts } = this.state.activeBundle || {};
-    const sidebarWidth = this.state.mode ==='EDIT' ? '20rem' : '0rem';
+    const sidebarWidth = this.props.mode ==='EDIT' ? '20rem' : '0rem';
     const uploadBundles = this.state.bundles.filter(b => b.uploadStatus);
     return (
       <div style={{ display: 'flex', maxWidth: '100%' }}>
-      {this.state.mode === 'EDIT' && <Sidebar
+      {this.props.mode === 'EDIT' && <Sidebar
         onToggle={this.handleSidebarToggle}
         showSidebar={this.state.showSidebar}
         width={sidebarWidth}
@@ -213,7 +294,7 @@ findSetSelectedLabel = (label) => {
       </Sidebar>}
         <div className="edf-wrapper" style={{ maxWidth: `calc(100% - ${sidebarWidth})` }}>
           {edf
-            ? <EDF mode={this.state.mode} annotationData={this.state.annotationData} markerData={this.state.markerData} currentLabel={this.state.selectedLabel} key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation} allLabels={this.state.allLabels} state={this.state} handleAddedEvents={this.handleAddedEvents} />
+            ? <EDF ref={this.edfViewRef}  mode={this.props.mode} annotationData={this.state.annotationData} markerData={this.state.markerData} currentLabel={this.state.selectedLabel}  key={edf.file.name} edf={edf} artifacts={artifacts} controls={this.proxy} onNewAnnotation={this.handleNewAnnotation} allLabels={this.state.allLabels} state={this.state} handleAddedEvents={this.handleAddedEvents} />
             : <p className="alert alert-info">Select an EDF file to display it.</p>
           }
         </div>
@@ -243,7 +324,7 @@ findSetSelectedLabel = (label) => {
                  <span role="img" aria-label="Zeige">ℹ️️</span>
               </button>
              
-              <select onChange={(e)=>{this.setState({mode:e.target.value})}}>
+              <select onChange={(e)=>this.ChangeMode(e.target.value)} value={this.props.mode}>
                 <option value="VIEW" label='View' />
                 <option value="EDIT" label='Edit' />
               </select>
@@ -275,3 +356,11 @@ findSetSelectedLabel = (label) => {
   }
 
 }
+
+
+const mapStateToProps = (state) => ({
+  mode: state.editor.mode,
+  isEditingChanges:state.editor.isEditingChanges
+});
+
+export default connect(mapStateToProps)(App);

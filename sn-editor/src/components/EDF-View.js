@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Graph from 'components/Graph';
 import Range from 'components/Range';
+import Papa from 'papaparse'
 // import Hypnogram from 'components/Hypnogram';
 
 const time = date => new Date(date).toLocaleTimeString().replace(' AM', '');
@@ -69,6 +70,8 @@ export default class EdfView extends Component {
     // this.loadData(start, start + this.chunkWidth); // buffer -- more data but slower
   }
 
+  
+
 
   componentWillUnmount() {
     this.detachHandlers();
@@ -118,15 +121,7 @@ export default class EdfView extends Component {
     }
   }
 
-  // handleClickScale = async ({ action, seconds }) => {
-  //   console.log("meo",action, seconds);
-  //   switch (action) {
-  //     case 'time':
-  //       this.handleRangeButtons(seconds);
-  //       break;
-  //     default: break;
-  //   }
-  // }
+
 
   handleRangeButtons = (value) => { //ranges
     if (value === '100') {
@@ -140,33 +135,8 @@ export default class EdfView extends Component {
     }
   }
 
-  saveAnnotation = async () => {
-    // let header = ['Channel', 'Type', 'Start', 'End'];
-
-    // let events = _.flatMap(this.graphs, graph =>
-    //   graph.graph.bands.map(band => [
-    //     graph.props.channel.label,
-    //     band.type,
-    //     band.start,
-    //     band.end,
-    //   ]),
-    // );
-    // console.log("events", events)
-
-    // let csv = [header, ...events]
-    //   .map(e => e.join(",")).join("\n");
-    //   console.log(csv); // CAN BE DOWNLOADED FROM HERE
-    // let fileName = this.props.edf.file.name.replace(/\.edf$/, '-annotation.csv');
-
-    // let enc = new TextEncoder();
-
-    // let file = new File([enc.encode(csv)], fileName);
-    // // let file = new File([enc.encode(csv)], "");
-    // console.log(file)
-
-    // return this.props.onNewAnnotation(file);
-// console.log(this.graphs[0].graph.currentLabel)
-    
+  saveAnnotation = async () => { 
+    console.log('getting all labels',this.props.allLabels)
     const XLSX = await import('xlsx');
     const header = ['Start', 'End', 'Label', 'Color'];
     const events = _.flatMap(this.graphs, graph =>
@@ -177,16 +147,64 @@ export default class EdfView extends Component {
         graph.graph.currentLabel.color,
       ]),
     );
-   
-    // const wb = XLSX.utils.book_new();
-    // const ws = XLSX.utils.aoa_to_sheet([header, ...events]);
-    // const sheetName = 'events';
-    // XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    // XLSX.writeFile(wb, 'events.xlsx', { compression: true });
-      // this.props.annotationData = [...this.props.annotationData, ...events];
+      this.saveBandChanges();
+
       
-      this.props.handleAddedEvents(events);
+      // this.props.handleAddedEvents(events);
   };
+
+  detectChangesMade = ()=>{
+    const changesArray = _.flatMap(this.graphs,graph=> graph.graph.changesMade)
+    let isChangesMade=false
+    changesArray.forEach(item=>{
+      if (item===true) {
+        isChangesMade=true
+      }
+    })
+
+    // if (isChangesMade) this.props.isEditingChanges(isChangesMade)
+    return isChangesMade
+  }
+
+  nilChanges = ()=>{
+    _.flatMap(this.graphs,graph=>{
+      graph.graph.changesMade = false
+    })
+  }
+
+  discardBandChanges = ()=>{
+    console.log('this.graphs',this.graphs)
+    _.flatMap(this.graphs,graph=>{
+      graph.graph.bands=[];
+      graph.redrawGraph()
+    })
+
+  }
+
+  saveBandChanges = ()=>{
+   let bands =_.flatMap(this.graphs,graph=>{
+      return graph.graph.bands
+    })
+    // Papa.unparse(bands)
+    console.log('bands',bands)
+  }
+
+  editableBands = (annoData)=>{
+    _.flatMap(this.graphs,(graph)=>{
+      annoData.map(item=>{
+        if (item[4]===graph.graph.name){
+          graph.graph.addBand({
+            start: item[0],
+            end: item[1],
+            note: item[2],
+            noteColor:item[3],
+            isEditable: true,
+          });
+        }
+      })
+     
+    })
+  }
 
   handleTimeButtons = (seconds) => {
     if (seconds === 'full') {
@@ -353,22 +371,6 @@ export default class EdfView extends Component {
     const addGraph = channel => ref => {
       this.graphs[channel.index] = ref;
     };
-
-    // return (
-    //   <div key="graphs" className="graphs">
-    //     {[header.channels[0], header.channels[1]].map((channel, index) =>
-    //       <Graph
-    //         key={`${channel.label}-${index}`}
-    //         channel={channel}
-    //         frequency={frequency}
-    //         data={data[index]}
-    //         artifacts={artifacts[channel.label]}
-    //         dateWindow={dateWindow}
-    //         onChange={this.updateDateWindow}
-    //       />
-    //     )}
-    //   </div>
-    // );
    
     return [
       <Range
@@ -389,6 +391,7 @@ export default class EdfView extends Component {
           <Graph
             mode={this.props.mode}
             currentLabel={this.props.currentLabel}
+            editChangesMade={this.props.editChangesMade}
             key={`${channel.label}-${channel.index}`}
             channel={channel}
             frequency={frequency}

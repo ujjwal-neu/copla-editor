@@ -45,6 +45,9 @@ export default class Graph extends Component {
     if (!this.graph) return;
     this.graph.currentLabel=this.props.currentLabel
     this.graph.mode=this.props.mode
+    // console.log('app state is ',this.props.state.editChanges)
+
+  
 
     if (this.props.dateWindow !== prevProps.dateWindow) {
       this.graph.dateWindow_ = this.props.dateWindow;
@@ -125,7 +128,7 @@ export default class Graph extends Component {
         
         function highlight_period(x_color, x_start, x_end,label) {
           var bottom_left = g.toDomCoords(x_start);
-          let x_end_updated = (Number(x_end)+2).toString();
+          let x_end_updated = (Number(x_end)+5).toString();
           var top_right = g.toDomCoords(x_end_updated);
   
           var left = bottom_left[0];
@@ -142,6 +145,7 @@ export default class Graph extends Component {
 
         }
         markerData.map(marker => highlight_period(marker[2], marker[0], marker[0], marker[1]))
+       
         annotationData.map(annotate => highlight_period(annotate[3], annotate[0], annotate[1], annotate[2]))
       }
 
@@ -150,6 +154,7 @@ export default class Graph extends Component {
      
   }
 
+  
   updateOptions = (options) => {
     if (!this.graph) return;
     this.graph.updateOptions(options);
@@ -162,16 +167,6 @@ export default class Graph extends Component {
     const options = this.getOptions(this.props.state.markerData, this.props.state.annotationData);
     const value = [dateWindow[0], [channel.physicalMinimum, 0, channel.physicalMaximum]];
     const graph = new Dygraph(this.container, [value], options, this.props.currentLabel);
-
-    // graph.setAnnotations([
-    //   {
-    //     series: channel.standardLabel,
-    //     x: "1661757775520.62",
-    //     shortText: "L",
-    //     text: "Good/Bad",
-    //     tickHeight: 10
-    //   }
-    //   ]);
     graph.name = channel.label;
     graph.draw = graph.drawGraph_.bind(graph);
     graph.cascadeEvents_('clearChart');

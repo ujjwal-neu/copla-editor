@@ -16,14 +16,14 @@ export default class PlotBands {
     
     this.interactions = {
       mousedown(event, graph, ctx) {
-        if(graph.mode ==='VIEW') return 
+        if(graph.mode !=='EDIT') return 
         console.log('plotband mouse down')
         ctx.dragEndX = null; // is set on the first click and creates a ghost plotband
         ctx.initializeMouseDown(event, graph, ctx);
       },
       mousemove: DygraphInteraction.moveZoom,
       mouseup: (event, graph, ctx) => {
-        if(graph.mode ==='VIEW') return 
+        if(graph.mode !=='EDIT') return 
         console.log('plotband mouse up')
         graph.clearZoomRect_();
         ctx.isZooming = false;
@@ -39,9 +39,12 @@ export default class PlotBands {
           this.add(graph, {
             start: graph.toDataXCoord(left),
             end: graph.toDataXCoord(right),
+            note:graph.currentLabel.label,
+            noteColor:graph.currentLabel.color,
             isEditing: true,
           });
           graph.draw();
+          graph.changesMade = true;
           ctx.cancelNextDblclick = true;
         }
         ctx.dragStartX = null;
@@ -105,10 +108,9 @@ export default class PlotBands {
   add(graph, options) {
     
     options.graph = graph;
-    options.note = graph.currentLabel.label
-    options.noteColor = graph.currentLabel.color
     const band = new Band(options);
     graph.bands.push(band);
+
   }
 
   /**
